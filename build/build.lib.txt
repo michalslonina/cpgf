@@ -168,6 +168,9 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 			set(LIB_COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -std=gnu++0x")
 		else(MINGW)
 			set(LIB_COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -std=c++11")
+			if(APPLE)
+				set(LIB_COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -stdlib=libc++")
+			endif(APPLE)
 		endif(MINGW)
 	endif(SUPPORT_GCC_0X)
 
@@ -192,6 +195,24 @@ ELSE(LIB_SHARED)
 ENDIF(LIB_SHARED)
 
 add_definitions(${SPIDERMONKEY_DEFINE})
+
+if(APPLE)
+	if(HAS_LUA)
+		target_link_libraries(${TARGET_LIB} ${LUA_LIB})
+	endif(HAS_LUA)
+	if(HAS_V8)
+		target_link_libraries(${TARGET_LIB} ${V8_LIB})
+	endif(HAS_V8)
+	if(HAS_PYTHON)
+		target_link_libraries(${TARGET_LIB} ${PYTHON_LIB})
+	endif(HAS_PYTHON)
+	if(HAS_SPIDERMONKEY)
+		target_link_libraries(${TARGET_LIB} ${SPIDERMONKEY_LIB})
+	endif(HAS_SPIDERMONKEY)
+
+	set(CMAKE_SHARED_LINKER_FLAGS "-stdlib=libc++")
+endif(APPLE)
+
 
 set_target_properties(
 	${TARGET_LIB}
