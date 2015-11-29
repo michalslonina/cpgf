@@ -24,13 +24,13 @@ set(SAMPLE_COMPILE_FLAGS " ")
 if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	set(SAMPLE_COMPILE_FLAGS "-Wall -Wextra -Wundef -O3")
 
-	if(SUPPORT_GCC_0X)
+	if(CPGF_SUPPORT_GCC_0X)
 		if(MINGW)
 			set(SAMPLE_COMPILE_FLAGS "${SAMPLE_COMPILE_FLAGS} -std=gnu++0x")
 		else(MINGW)
 			set(SAMPLE_COMPILE_FLAGS "${SAMPLE_COMPILE_FLAGS} -std=c++11")
 		endif(MINGW)
-	endif(SUPPORT_GCC_0X)
+	endif(CPGF_SUPPORT_GCC_0X)
 
 endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
@@ -103,7 +103,7 @@ target_link_libraries(${TARGET_SAMPLESERIALIZATION} ${TARGET_LIB})
 
 
 # sample Lua
-if(${HAS_LUA})
+if(${CPGF_HAS_LUA})
 	file(GLOB GLOB_SAMPLELUA ${SAMPLE_BIND_PATH}/luabind/*.cpp)
 	set(SRC_SAMPLELUA
 		${SAMPLE_ROOT}/samplemain.cpp
@@ -127,11 +127,11 @@ if(${HAS_LUA})
 	)
 
 	target_link_libraries(${TARGET_SAMPLELUA} ${TARGET_LIB} ${LUA_LIB})
-endif(${HAS_LUA})
+endif(${CPGF_HAS_LUA})
 
 
 # sample opengl
-if(${HAS_GLUT})
+if(${CPGF_HAS_GLUT})
 	file(GLOB GLOB_SAMPLEOPENGL ${SAMPLE_ROOT}/opengl/*.cpp)
 	set(SRC_SAMPLEOPENGL
 		${GLOB_SAMPLEOPENGL}
@@ -159,11 +159,11 @@ if(${HAS_GLUT})
 	add_definitions(-DFREEGLUT_EXPORTS)
 
 	target_link_libraries(${TARGET_SAMPLEOPENGL} ${TARGET_LIB} ${GLUT_LIB} ${LUA_LIB} ${V8_LIB} ${PYTHON_LIB} ${SPIDERMONKEY_LIB} )
-endif(${HAS_GLUT})
+endif(${CPGF_HAS_GLUT})
 
 
 # sample Box2D
-if(${HAS_BOX2D})
+if(${CPGF_USE_BOX2D_IN_SAMPLES})
 	file(GLOB GLOB_SAMPLEBOX2D ${SAMPLE_ROOT}/box2d/*.cpp)
 	file(GLOB GLOB_METABOX2D ${SRC_PATH}/metadata/box2d/*.cpp)
 	set(SRC_SAMPLEBOX2D
@@ -200,11 +200,11 @@ if(${HAS_BOX2D})
 	add_definitions(-DFREEGLUT_EXPORTS)
 
 	target_link_libraries(${TARGET_SAMPLEBOX2D} ${TARGET_LIB} ${GLUT_LIB} ${BOX2D_LIB} ${LUA_LIB} ${V8_LIB} ${PYTHON_LIB} ${SPIDERMONKEY_LIB} )
-endif(${HAS_BOX2D})
+endif(${CPGF_USE_BOX2D_IN_SAMPLES})
 
 
 # sample SFML
-if(${HAS_SFML})
+if(${CPGF_USE_SFML_IN_SAMPLES})
 	file(GLOB GLOB_SAMPLESFML ${SAMPLE_ROOT}/sfml/*.cpp)
 	file(GLOB GLOB_METASFML ${SRC_PATH}/metadata/sfml/*.cpp)
 	set(SRC_SAMPLESFML
@@ -230,11 +230,11 @@ if(${HAS_SFML})
 	)
 
 	target_link_libraries(${TARGET_SAMPLESFML} ${TARGET_LIB} ${SFML_LIB} ${LUA_LIB} ${V8_LIB} ${PYTHON_LIB} ${SPIDERMONKEY_LIB} )
-endif(${HAS_SFML})
+endif(${CPGF_USE_SFML_IN_SAMPLES})
 
 
 # sample irrlicht
-if(${HAS_IRRLICHT})
+if(${CPGF_USE_IRRLICHT_IN_SAMPLES})
 	file(GLOB GLOB_SAMPLEIRRLICHT ${SAMPLE_ROOT}/irrlicht/*.cpp)
 	file(GLOB GLOB_METAIRRLICHT ${SRC_PATH}/metadata/irrlicht/*.cpp)
 	set(SRC_SAMPLEIRRLICHT
@@ -260,6 +260,6 @@ if(${HAS_IRRLICHT})
 	)
 
 	target_link_libraries(${TARGET_SAMPLEIRRLICHT} ${TARGET_LIB} ${IRRLICHT_LIB} ${LUA_LIB} ${V8_LIB} ${PYTHON_LIB} ${SPIDERMONKEY_LIB} )
-endif(${HAS_IRRLICHT})
+endif(${CPGF_USE_IRRLICHT_IN_SAMPLES})
 
 

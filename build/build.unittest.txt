@@ -1,17 +1,17 @@
 set(UNITTEST_COMPILE_FLAGS "-Wall -Wextra -Wundef -O0")
 if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	set(UNITTEST_COMPILE_FLAGS "-Wall -Wextra -Wundef -O0")
-	if(TEST_GCOV)
+	if(CPGF_TEST_GCOV)
 		set(UNITTEST_COMPILE_FLAGS "-Wall -Wextra -Wundef -O0 -fprofile-arcs -ftest-coverage")
-	endif(TEST_GCOV)
+	endif(CPGF_TEST_GCOV)
 
-	if(SUPPORT_GCC_0X)
+	if(CPGF_SUPPORT_GCC_0X)
 		if(MINGW)
 			set(UNITTEST_COMPILE_FLAGS "${UNITTEST_COMPILE_FLAGS} -std=gnu++0x")
 		else(MINGW)
 			set(UNITTEST_COMPILE_FLAGS "${UNITTEST_COMPILE_FLAGS} -std=c++11")
 		endif(MINGW)
-	endif(SUPPORT_GCC_0X)
+	endif(CPGF_SUPPORT_GCC_0X)
 
 endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
@@ -24,21 +24,21 @@ endif(MSVC)
 ### unit test
 
 if((not DEFINED UNIT_TEST_DIR) OR (UNIT_TEST_DIR STREQUAL ""))
-	set(HAS_UNITTEST 0)
+	set(CPGF_HAS_UNITTEST 0)
 endif((not DEFINED UNIT_TEST_DIR) OR (UNIT_TEST_DIR STREQUAL ""))
 
-if(${HAS_UNITTEST})
+if(${CPGF_HAS_UNITTEST})
 	find_file(UTEST_EXIST
 		NAMES "UnitTest++.h"
 		PATHS ${UNIT_TEST_DIR}/src NO_DEFAULT_PATH
 	)
 
 	if(${UTEST_EXIST} STREQUAL "UTEST_EXIST-NOTFOUND")
-		set(HAS_UNITTEST 0)
+		set(CPGF_HAS_UNITTEST 0)
 
 		message(WARNING "Can't find UnitTest++ in ${UNIT_TEST_DIR}")
 	endif(${UTEST_EXIST} STREQUAL "UTEST_EXIST-NOTFOUND")
-endif(${HAS_UNITTEST})
+endif(${CPGF_HAS_UNITTEST})
 
 macro(globAndAppendFiles fileList)
 	set(globAndAppendFiles_patterns ${ARGN})
@@ -74,55 +74,55 @@ macro(partUnitTest target)
 		PROPERTIES
 		OUTPUT_NAME ${target}
 		COMPILE_FLAGS ${UNITTEST_COMPILE_FLAGS}
-		COMPILE_DEFINITIONS "ENABLE_LUA=${HAS_LUA};ENABLE_V8=${HAS_V8};ENABLE_PYTHON=${HAS_PYTHON};ENABLE_SPIDERMONKEY=${HAS_SPIDERMONKEY};ENABLE_BOOST=${HAS_BOOST};SUPPORT_CPP_11=${SUPPORT_GCC_0X}"
+		COMPILE_DEFINITIONS "ENABLE_LUA=${CPGF_HAS_LUA};ENABLE_V8=${CPGF_HAS_V8};ENABLE_PYTHON=${CPGF_HAS_PYTHON};ENABLE_SPIDERMONKEY=${CPGF_HAS_SPIDERMONKEY};ENABLE_BOOST=${CPGF_HAS_BOOST};SUPPORT_CPP_11=${CPGF_SUPPORT_GCC_0X}"
 	)
 	target_link_libraries(${target} ${TARGET_LIB} ${LUA_LIB} ${V8_LIB} ${PYTHON_LIB} ${SPIDERMONKEY_LIB} )
 endmacro()
 
-if(${HAS_UNITTEST})
+if(${CPGF_HAS_UNITTEST})
 	set(GLOB_TEST_LUA )
 	set(GLOB_METATEST_LUA )
-	if(HAS_LUA)
+	if(CPGF_HAS_LUA)
 		globAndAppendFiles(GLOB_TEST_LUA
 			${TEST_PATH}/scriptbind/luabind/*.cpp
 		)
 		globAndAppendFiles(GLOB_METATEST_LUA
 			${TEST_PATH}/metagen/tests/luatests/*.cpp
 		)
-	endif(HAS_LUA)
+	endif(CPGF_HAS_LUA)
 
 	set(GLOB_TEST_V8 )
 	set(GLOB_METATEST_V8 )
-	if(HAS_V8)
+	if(CPGF_HAS_V8)
 		globAndAppendFiles(GLOB_TEST_V8
 			${TEST_PATH}/scriptbind/v8bind/*.cpp
 		)
 		globAndAppendFiles(GLOB_METATEST_V8
 			${TEST_PATH}/metagen/tests/v8tests/*.cpp
 		)
-	endif(HAS_V8)
+	endif(CPGF_HAS_V8)
 
 	set(GLOB_TEST_PYTHON )
 	set(GLOB_METATEST_PYTHON )
-	if(HAS_PYTHON)
+	if(CPGF_HAS_PYTHON)
 		globAndAppendFiles(GLOB_TEST_PYTHON
 			${TEST_PATH}/scriptbind/pythonbind/*.cpp
 		)
 		globAndAppendFiles(GLOB_METATEST_PYTHON
 			${TEST_PATH}/metagen/tests/pythontests/*.cpp
 		)
-	endif(HAS_PYTHON)
+	endif(CPGF_HAS_PYTHON)
 
 	set(GLOB_TEST_SPIDERMONKEY )
 	set(GLOB_METATEST_SPIDERMONKEY )
-	if(HAS_SPIDERMONKEY)
+	if(CPGF_HAS_SPIDERMONKEY)
 		globAndAppendFiles(GLOB_TEST_SPIDERMONKEY
 			${TEST_PATH}/scriptbind/spidermonkeybind/*.cpp
 		)
 		globAndAppendFiles(GLOB_METATEST_SPIDERMONKEY
 			${TEST_PATH}/metagen/tests/spidermonkeytests/*.cpp
 		)
-	endif(HAS_SPIDERMONKEY)
+	endif(CPGF_HAS_SPIDERMONKEY)
 
 	partUnitTest("test_misc"
 		${TEST_PATH}/misc/*.cpp
@@ -176,13 +176,13 @@ if(${HAS_UNITTEST})
 		${GLOB_METATEST_PYTHON}
 	)
 
-	if(HAS_LUA LESS 1)
+	if(CPGF_HAS_LUA LESS 1)
 		message(WARNING "Can't find Lua for unit test. Unit test will not include Lua binding test.")
-	endif(HAS_LUA LESS 1)
+	endif(CPGF_HAS_LUA LESS 1)
 
-	if(HAS_V8 LESS 1)
+	if(CPGF_HAS_V8 LESS 1)
 		message(WARNING "Can't find V8 for unit test. Unit test will not include V8 binding test.")
-	endif(HAS_V8 LESS 1)
+	endif(CPGF_HAS_V8 LESS 1)
 
 
 	set(UNITTEST_FRAMEWORK_SUBDIR Posix)
@@ -238,9 +238,9 @@ if(${HAS_UNITTEST})
 
 	include_directories(${UNIT_TEST_DIR}/src)
 
-	if(${HAS_BOOST})
+	if(${CPGF_HAS_BOOST})
 		include_directories(${BOOST_INC})
-	endif(${HAS_BOOST})
+	endif(${CPGF_HAS_BOOST})
 
 
 	add_executable(
@@ -252,31 +252,32 @@ if(${HAS_UNITTEST})
 	target_link_libraries(${TARGET_UNITTEST} ${TARGET_LIB})
 
 	if(CMAKE_COMPILER_IS_GNUCC)
-		if(TEST_GCOV)
+		if(CPGF_TEST_GCOV)
 			target_link_libraries(${TARGET_UNITTEST} gcov)
-		endif(TEST_GCOV)
+		endif(CPGF_TEST_GCOV)
 	endif(CMAKE_COMPILER_IS_GNUCC)
 
-	if(HAS_LUA)
+	if(CPGF_HAS_LUA)
 		target_link_libraries(${TARGET_UNITTEST} ${LUA_LIB})
-	endif(HAS_LUA)
-	if(HAS_V8)
+	endif(CPGF_HAS_LUA)
+	if(CPGF_HAS_V8)
 		target_link_libraries(${TARGET_UNITTEST} ${V8_LIB})
-	endif(HAS_V8)
-	if(HAS_PYTHON)
+	endif(CPGF_HAS_V8)
+	if(CPGF_HAS_PYTHON)
 		target_link_libraries(${TARGET_UNITTEST} ${PYTHON_LIB})
-	endif(HAS_PYTHON)
-	if(HAS_SPIDERMONKEY)
+	endif(CPGF_HAS_PYTHON)
+	if(CPGF_HAS_SPIDERMONKEY)
 		target_link_libraries(${TARGET_UNITTEST} ${SPIDERMONKEY_LIB})
-	endif(HAS_SPIDERMONKEY)
+	endif(CPGF_HAS_SPIDERMONKEY)
 
 	set_target_properties(
 		${TARGET_UNITTEST}
 		PROPERTIES
 		OUTPUT_NAME ${OUTNAME_UNITTEST}
 		COMPILE_FLAGS ${UNITTEST_COMPILE_FLAGS}
-		COMPILE_DEFINITIONS "ENABLE_LUA=${HAS_LUA};ENABLE_V8=${HAS_V8};ENABLE_PYTHON=${HAS_PYTHON};ENABLE_SPIDERMONKEY=${HAS_SPIDERMONKEY};ENABLE_BOOST=${HAS_BOOST};SUPPORT_CPP_11=${SUPPORT_GCC_0X}"
+		COMPILE_DEFINITIONS "ENABLE_LUA=${CPGF_HAS_LUA};ENABLE_V8=${CPGF_HAS_V8};ENABLE_PYTHON=${CPGF_HAS_PYTHON};ENABLE_SPIDERMONKEY=${CPGF_HAS_SPIDERMONKEY};ENABLE_BOOST=${CPGF_HAS_BOOST};SUPPORT_CPP_11=${CPGF_SUPPORT_GCC_0X}"
 	)
 
-endif(${HAS_UNITTEST})
+endif(${CPGF_HAS_UNITTEST})
+
 
